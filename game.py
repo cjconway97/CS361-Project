@@ -12,7 +12,7 @@ clock = pygame.time.Clock()
 font = pygame.font.Font('Fonts/Pixeltype.ttf', 50)
 
 # Establishing game state
-is_game_active = 1
+is_game_active = -1
 
 # Creating all the skybox + ground surfacesto use
 sky_surface = pygame.image.load('Background/Environment/PNG/sky.png').convert()
@@ -24,8 +24,22 @@ score_surface = font.render('Score:', False, 'Black')
 score_rect = score_surface.get_rect(center=(400, 50))
 
 # Creating title screen surfaces
-score_surface = font.render('Score:', False, 'Black')
-score_rect = score_surface.get_rect(center=(400, 50))
+# Creating end screen surfaces
+start_surface_title = font.render('Potato...', False, 'White')
+start_surface_play = font.render('Play!', False, 'White', 'Green')
+start_surface_quit = font.render('Quit :(', False, 'White', 'Yellow')
+start_surface_quit2 = font.render('Are You Sure You Want to Quit?', False, 'Black', 'Red')
+start_surface_quit2_yes = font.render('Yes', False, 'Black', 'Green')
+start_surface_quit2_no = font.render('No', False, 'Black', 'Red')
+start_surface_changelog = font.render('Recent Changes:', False, 'Black')
+start_rect_title = start_surface_play.get_rect(center=(375, 150))
+start_rect_play = start_surface_play.get_rect(center=(400, 200))
+start_rect_quit = start_surface_quit.get_rect(center=(400, 250))
+start_rect_quit2 = start_surface_quit2.get_rect(center=(400, 275))
+start_rect_quit2_yes = start_surface_quit2_yes.get_rect(center=(350, 325))
+start_rect_quit2_no = start_surface_quit2_no.get_rect(center=(450, 325))
+start_rect_changelog = start_surface_changelog.get_rect(center=(0, 350))
+second_quit = 0
 
 # Creating end screen surfaces
 end_surface1 = font.render('Press *Spacebar* to try again!', False, 'Black')
@@ -55,7 +69,7 @@ while True:
         if event.type == pygame.QUIT:
             pygame.quit()
             exit()
-        if is_game_active:
+        if is_game_active == 1:
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_SPACE and player_rect.bottom >= 315:
                     player_gravity = -20
@@ -64,22 +78,35 @@ while True:
                 if event.key == pygame.K_a:
                     player_left = -10
 
-        else:
+        elif is_game_active == 0:
             if event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE:
                 enemy_rect = enemy_surface.get_rect(midbottom=(300, 315))
                 player_rect = player_surface.get_rect(midbottom=(50, 315))
                 is_game_active = 1
+            if event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
+                enemy_rect = enemy_surface.get_rect(midbottom=(300, 315))
+                player_rect = player_surface.get_rect(midbottom=(50, 315))
+                is_game_active = -1
+        else:
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                if start_rect_play.collidepoint(event.pos):
+                    second_quit = 0
+                    is_game_active = 1
+                if start_rect_quit.collidepoint(event.pos):
+                    second_quit = 1
+                if start_rect_quit2_yes.collidepoint(event.pos):
+                    pygame.quit()
+                    exit()
+                if start_rect_quit2_no.collidepoint(event.pos):
+                    second_quit = 0
 
-        if event.type == pygame.MOUSEBUTTONDOWN:
-            if player_rect.collidepoint(event.pos):
-                player_gravity = -20
     # Build skybox
     skybox_x = 0
     while skybox_x < display_width + 112:
         screen.blit(sky_surface, (skybox_x, 0))
         screen.blit(sea_surface, (skybox_x, 304))
         skybox_x += 112
-    if is_game_active:
+    if is_game_active == 1:
         # Build ground
         ground_x = -50
         while ground_x < display_width + 50:
@@ -117,16 +144,23 @@ while True:
         if player_rect.colliderect(enemy_rect):
             is_game_active = 0
 
-    else:
+    elif is_game_active == 0:
         screen.fill('Red')
         screen.blit(end_surface1, end_rect1)
         screen.blit(end_surface2, end_rect2)
         screen.blit(end_surface3, end_rect3)
 
-    # Mouse controls
-    mouse_pos = pygame.mouse.get_pos()
-    if player_rect.collidepoint(mouse_pos):
-        print(pygame.mouse.get_pressed())
+    else:
+        screen.fill('Black')
+        screen.blit(start_surface_title, start_rect_title)
+        screen.blit(start_surface_play, start_rect_play)
+        screen.blit(start_surface_quit, start_rect_quit)
+        screen.blit(start_surface_changelog, start_rect_changelog)
+        if second_quit == 1:
+            screen.blit(start_surface_quit2, start_rect_quit2)
+            screen.blit(start_surface_quit2_yes, start_rect_quit2_yes)
+            screen.blit(start_surface_quit2_no, start_rect_quit2_no)
+
 
     # Update display to show all surfaces, lock FPS to 60
     pygame.display.update()
