@@ -1,2 +1,2 @@
 # CS361 Project
- CS361 Final Project
+ CS361 Project
