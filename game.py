@@ -61,7 +61,7 @@ hiscore_rect2 = hiscore_surface2.get_rect(center=(400, 300))
 
 # Creating enemy + hit box
 enemy_surface = pygame.image.load('Enemy Assets/Enemies Files/sprites/fox/fox1.png').convert_alpha()
-enemy_surface = pygame.transform.scale(enemy_surface, (100, 100))
+enemy_surface = pygame.transform.scale(enemy_surface, (50, 50))
 enemy_rect = enemy_surface.get_rect(midbottom=(800, 315))
 
 class Player:
@@ -71,7 +71,7 @@ class Player:
         self.player_gravity = 0
         self.player_surface = pygame.image.load(
             'Player Assets/BlueWizard Animations/BlueWizard/2BlueWizardIdle/Chara - BlueIdle00000.png').convert_alpha()
-        self.player_surface = pygame.transform.scale(self.player_surface, (100, 100))
+        self.player_surface = pygame.transform.scale(self.player_surface, (75, 75))
         self.player_rect = self.player_surface.get_rect(midbottom=(50, 335))
 
     def get_player_speed(self):
