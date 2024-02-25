@@ -1,5 +1,6 @@
 import pygame
 from sys import exit
+from datetime import datetime
 
 pygame.init()
 
@@ -170,6 +171,17 @@ def display_score():
     score_rect = score_surface.get_rect(center=(400, 50))
     screen.blit(score_surface, score_rect)
 
+def write_score(score):
+    file = open("score.txt", "w")
+    file.write('User:Guest' + ',' + 'Score:' + str(score)+',' + 'Date:' + str(datetime.now()))
+    file.close()
+
+def read_score():
+    file = open("leaderboard.txt", "r")
+    score_list = file.read('leader')
+    file.close()
+    return score_list
+
 start_time = 0
 player = Player()
 enemies = []
@@ -254,6 +266,7 @@ while True:
             if player.get_player_rect().colliderect(enemy.get_rect()):
                 end_score_surface2 = font.render(str(int((pygame.time.get_ticks()/1000)-start_time)), False, 'Black')
                 end_score_rect2 = end_score_surface2.get_rect(midleft=(460, 50))
+                write_score(str(int((pygame.time.get_ticks()/1000)-start_time)))
                 is_game_active = 0
                 break
             if enemy.get_right_position() < 0:
@@ -261,7 +274,7 @@ while True:
             count += 1
 
 
-        # Spawn additional enemies
+        # Spawn additional enemies (TO BE IMPLEMENTED FURTHER)
         if len(enemies) == 0:
             new_enemy = Enemy()
             new_enemy.create_enemy(enemy_surface)
@@ -278,6 +291,7 @@ while True:
 
     # Hiscore Screen
     elif is_game_active == 2:
+        # read_score() (REQUIRES MICROSERVICE IMPLEMENTATION)
         screen.fill('Black')
         screen.blit(hiscore_surface1, hiscore_rect1)
         screen.blit(hiscore_surface2, hiscore_rect2)
